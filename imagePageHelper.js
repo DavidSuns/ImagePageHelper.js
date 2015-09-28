@@ -80,8 +80,8 @@
   ImagePageHelper.prototype._getClickArea = function(e, me) {
     var touch = e.changedTouches[0];
     for(var i= 0; i< me.dataSet.length; i++) {
-      if(touch.clientX >= me.dataSet[i].x && touch.clientX < me.dataSet[i].x + me.dataSet[i].width &&
-        touch.clientY >= me.dataSet[i].y && touch.clientY < me.dataSet[i].y + me.dataSet[i].height ) {
+      if(touch.pageX >= me.dataSet[i].x && touch.pageX < me.dataSet[i].x + me.dataSet[i].width &&
+        touch.pageY >= me.dataSet[i].y && touch.pageY < me.dataSet[i].y + me.dataSet[i].height ) {
           if(me.bugMode) {
             me._testOpenApp(dataSet[i].videoInfo);
           } else {
