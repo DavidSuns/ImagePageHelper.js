@@ -1,16 +1,16 @@
 'use strcit';
 
 /*
-* ImagePageHelper.js version 1.0
+* ImagePageHelper.js version 2.0
 */
 
 (function() {
   var ImagePageHelper = function() {
     this.dataSet = [];
     this.params = {
-      appStoreUrl : "",
-      iosAppUrlTemplete : "",
-      androidAppUrlTemplete : "",
+      appStoreUrl : {},
+      iosAppUrlTemplete : {},
+      androidAppUrlTemplete : {},
       environment: ""
     };
     this.bugMode = false;
@@ -32,27 +32,36 @@
     return this.bugMode;
   };
 
-  ImagePageHelper.prototype.setAppStoreUrl = function(url) {
-    this.params.appStoreUrl = url;
+  ImagePageHelper.prototype.addAppStoreUrl = function(appName, url) {
+    this.params.appStoreUrl[appName] = url;
   };
 
-  ImagePageHelper.prototype.getAppStoreUrl = function() {
+  ImagePageHelper.prototype.getAppStoreUrl = function(appName) {
+    if (appName) {
+      return this.params.appStoreUrl[appName];
+    }
     return this.params.appStoreUrl;
   };
 
-  ImagePageHelper.prototype.setIosUrlTemplete = function(urlTemplete) {
-    this.params.iosAppUrlTemplete = urlTemplete;
+  ImagePageHelper.prototype.addIosUrlTemplete = function(appName, urlTemplete) {
+    this.params.iosAppUrlTemplete[appName] = urlTemplete;
   };
 
-  ImagePageHelper.prototype.getIosUrlTemplete = function() {
+  ImagePageHelper.prototype.getIosUrlTemplete = function(appName) {
+    if(appName) {
+      return this.params.iosAppUrlTemplete[appName];
+    }
     return this.params.iosAppUrlTemplete;
   };
 
-  ImagePageHelper.prototype.setAndroidUrlTemplete = function(urlTemplete) {
-    this.params.androidAppUrlTemplete = urlTemplete;
+  ImagePageHelper.prototype.setAndroidUrlTemplete = function(appName, urlTemplete) {
+    this.params.androidAppUrlTemplete[appName] = urlTemplete;
   };
 
-  ImagePageHelper.prototype.getAndroidUrlTemplete = function() {
+  ImagePageHelper.prototype.getAndroidUrlTemplete = function(appName) {
+    if(appName) {
+      return this.params.androidAppUrlTemplete[appName];
+    }
     return this.params.androidAppUrlTemplete;
   };
 
@@ -78,32 +87,56 @@
   };
 
   ImagePageHelper.prototype._getClickArea = function(e, me) {
+    var data, i, j;
     var touch = e.changedTouches[0];
-    for(var i= 0; i< me.dataSet.length; i++) {
-      if(touch.pageX >= me.dataSet[i].x && touch.pageX < me.dataSet[i].x + me.dataSet[i].width &&
-        touch.pageY >= me.dataSet[i].y && touch.pageY < me.dataSet[i].y + me.dataSet[i].height ) {
-          if(me.bugMode) {
-            me._testOpenApp(dataSet[i].videoInfo);
-          } else {
-            me._openApp(dataSet[i].videoInfo);
-          }
-          break;
+
+    for(i= 0; i< me.dataSet.length; i++) {
+      data = me.dataSet[i].data;
+      for(j= 0; j< data.length; j++) {
+        if(touch.pageX >= data[j].x && touch.pageX < data[j].x + data[j].width &&
+          touch.pageY >= data[j].y && touch.pageY < data[j].y + data[j].height ) {
+            if(me.bugMode) {
+              if(me.dataSet[i].appName === "NOAPP") {
+                me._testOpenWebPage(data[j].websiteUrl);
+              } else {
+                me._testOpenApp(i, data[j].videoInfo);
+              }
+            } else {
+              if(me.dataSet[i].appName === "NOAPP") {
+                me._openWebPage(data[j].websiteUrl);
+              } else {
+                me._openApp(i, data[j].videoInfo);
+              }
+            }
+            break;
+        }
       }
     }
   };
 
-  ImagePageHelper.prototype._testOpenApp = function(videoInfo) {
-    var appUrl = this._createAppUrl(videoInfo);
-    var alertInfo = "appUrl : " + appUrl +
-                    "\n appStore : " + this.params.appStoreUrl;
+  ImagePageHelper.prototype._testOpenWebPage = function(websiteUrl) {
+    var alertInfo = "Website url : " + websiteUrl;
     alert(alertInfo);
   };
 
-  ImagePageHelper.prototype._openApp = function(videoInfo) {
-    var appUrl = this._createAppUrl(videoInfo);
+  ImagePageHelper.prototype._testOpenApp = function(index, videoInfo) {
+    var appUrl, alertInfo;
+
+    appUrl = this._createAppUrl(index, videoInfo);
+    alertInfo = "appUrl : " + appUrl +
+                    "\n appStore : " + this.params.appStoreUrl[this.dataSet[index].appName];
+    alert(alertInfo);
+  };
+
+  ImagePageHelper.prototype._openWebPage = function (websiteUrl) {
+    window.location.href = websiteUrl;
+  };
+
+  ImagePageHelper.prototype._openApp = function(index, videoInfo) {
+    var appUrl = this._createAppUrl(index, videoInfo);
 
     var link = document.createElement('a');
-    link.setAttribute("href", this.params.appStoreUrl);
+    link.setAttribute("href", this.params.appStoreUrl[this.dataSet[index].appName]);
     link.addEventListener("click", function() {
       var ifr = document.createElement('iframe');
       ifr.src = appUrl;
@@ -120,13 +153,13 @@
    }
   };
 
-  ImagePageHelper.prototype._createAppUrl = function(videoInfo) {
+  ImagePageHelper.prototype._createAppUrl = function(index, videoInfo) {
     var url = "", urlParams, videoParams;
 
     if(this.params.environment === "android") {
-      urlParams = this.params.androidAppUrlTemplete.split("null");
+      urlParams = this.params.androidAppUrlTemplete[this.dataSet[index].appName].split("null");
     } else if(this.params.environment === "ios") {
-      urlParams = this.params.iosAppUrlTemplete.split("null");
+      urlParams = this.params.iosAppUrlTemplete[this.dataSet[index].appName].split("null");
     } else {
       alert("环境出错");
     }

@@ -13,43 +13,73 @@
 <script type="text/javascript">
   var dataSet = [
       {
-          x: 0,
-          y: 0,
-          width: 500,
-          height:300,
-          videoInfo: {
-            seriesId: 1,
-            videoId: 1
+        appName: "baoTV",
+        data: [
+          {
+              x: 0,
+              y: 0,
+              width: 500,
+              height:300,
+              videoInfo: {
+                seriesId: 1,
+                videoId: 1
+              }
+          },
+          {
+              x: 0,
+              y: 400,
+              width: 500,
+              height:300,
+              videoInfo: {
+                seriesId: 2,
+                videoId: 2
+              }
+          },
+          {
+              x: 0,
+              y: 800,
+              width: 500,
+              height:300,
+              videoInfo: {
+                seriesId: 3,
+                videoId: 3
+              }
           }
+        ]
       },
       {
-          x: 0,
-          y: 400,
-          width: 500,
-          height:300,
-          videoInfo: {
-            seriesId: 2,
-            videoId: 2
+        appName: "NOAPP",
+        data: [
+          {
+            x: 0,
+            y: 1200,
+            width: 500,
+            height:300,
+            websiteUrl: "http://www.baidu.com"
+          },
+          {
+            x: 0,
+            y: 1600,
+            width: 500,
+            height:300,
+            websiteUrl: "http://www.sina.com"
           }
-      },
-      {
-          x: 0,
-          y: 800,
-          width: 500,
-          height:300,
-          videoInfo: {
-            seriesId: 3,
-            videoId: 3
-          }
+        ]
       }
   ];
 
   var params = {
-    appStoreUrl : "http://a.app.qq.com/o/simple.jsp?pkgname=com.baozou.baodiantv&amp;g_f=991653",
-    iosAppUrlTemplete : "BaoZouTV://seryId=null&videoId=null&action=playVideo",
-    androidAppUrlTemplete : "BaoZouTV://series/null/videos/null"
+    appStoreUrl : {
+      baoTV: "http://a.app.qq.com/o/simple.jsp?pkgname=com.baozou.baodiantv&amp;g_f=991653"
+    },
+    iosAppUrlTemplete : {
+      baoTV: "BaoZouTV://seryId=null&videoId=null&action=playVideo"
+    },
+    androidAppUrlTemplete : {
+      baoTV: "BaoZouTV://series/null/videos/null"
+    }
   };
 
-  var imageHelper = new window.baoTV.mobile.imagePageHelper();
+  var imageHelper = new window.baoTV.mobile.ImagePageHelper();
   imageHelper.initImagePage("testImg", dataSet, params);
 </script>
